@@ -2,45 +2,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def print_cloud(points, Lx, Ly, delta):
+def print_cloud(points, l_x, l_y, delta):
     plt.figure()
-    plt.scatter(points[:, 0], points[:, 1], s=Lx, alpha=1)
+    plt.scatter(points[:, 0], points[:, 1], s=l_x, alpha=1)
 
-    x_lines = (0, delta * Lx, (1 - delta) * Lx, Lx)
-    y_lines = (0, delta * Ly, (1 - delta) * Ly, Ly)
+    plt.plot((0, 0), (0, l_y), 'k-', color='r')
+    plt.plot((0, l_x), (0, 0), 'k-', color='r')
+    plt.plot((0, l_x), (l_y, l_y), 'k-', color='r')
+    plt.plot((l_x, l_x), (0, l_y), 'k-', color='r')
 
-    plt.plot((0, 0), (0, Ly), 'k-', color='r')
-    plt.plot((0, Lx), (0, 0), 'k-', color='r')
-    plt.plot((0, Lx), (Ly, Ly), 'k-', color='r')
-    plt.plot((Lx, Lx), (0, Ly), 'k-', color='r')
-
-    delta_x = Lx * delta
-    delta_y = Ly * delta
-    plt.plot((delta_x, delta_x), (0, Ly), 'k-', color='r')
-    plt.plot((0, Lx), (delta_y, delta_y), 'k-', color='r')
-    plt.plot((0, Lx), (Ly - delta_y, Ly - delta_y), 'k-', color='r')
-    plt.plot((Lx - delta_x, Lx - delta_x), (0, Ly), 'k-', color='r')
+    delta_x = l_x * delta
+    delta_y = l_y * delta
+    plt.plot((delta_x, delta_x), (0, l_y), 'k-', color='r')
+    plt.plot((0, l_x), (delta_y, delta_y), 'k-', color='r')
+    plt.plot((0, l_x), (l_y - delta_y, l_y - delta_y), 'k-', color='r')
+    plt.plot((l_x - delta_x, l_x - delta_x), (0, l_y), 'k-', color='r')
 
     plt.show()
 
-def uniform_node_clouds(Lx, Ly, delta, Npoints, line_share):
+
+def uniform_node_clouds(l_x, l_y, delta, n_points):
     xy_min = [0, 0]
-    xy_max = [Lx, Ly]
+    xy_max = [l_x, l_y]
 
-    xline_qty = int(np.sqrt(Npoints) / Ly)
-    yline_qty = int(np.sqrt(Npoints) / Lx)
+    dot_dist = np.sqrt(l_x * l_y / n_points)
 
-    points = np.random.uniform(low=xy_min, high=xy_max, size=(Npoints, 2))
-    xline_points = np.linspace(0, Lx, xline_qty)
-    yline_points = np.linspace(0, Ly, yline_qty)
+    x_line_qty = int(l_x/dot_dist)
+    y_line_qty = int(l_y/dot_dist)
 
-    x_lines = (0, delta * Lx, (1 - delta) * Lx, Lx)
-    y_lines = (0, delta * Ly, (1 - delta) * Ly, Ly)
+    points = np.random.uniform(low=xy_min, high=xy_max, size=(n_points, 2))
+    x_line_points = np.linspace(0, l_x, x_line_qty)
+    y_line_points = np.linspace(0, l_y, y_line_qty)
+
+    x_lines = (0, delta * l_x, (1 - delta) * l_x, l_x)
+    y_lines = (0, delta * l_y, (1 - delta) * l_y, l_y)
 
     for i in range(0, 4):
-        xline = np.concatenate((xline_points[:, np.newaxis], np.repeat(x_lines[i], xline_qty)[:, np.newaxis]), axis=1)
-        yline = np.concatenate((np.repeat(y_lines[i], yline_qty)[:, np.newaxis], yline_points[:, np.newaxis]), axis=1)
+        x_line = np.concatenate((x_line_points[:, np.newaxis], np.repeat(x_lines[i], x_line_qty)[:, np.newaxis]), axis=1)
+        y_line = np.concatenate((np.repeat(y_lines[i], y_line_qty)[:, np.newaxis], y_line_points[:, np.newaxis]), axis=1)
 
-        points = np.concatenate((points, xline))
-        points = np.concatenate((points, yline))
+        points = np.concatenate((points, x_line))
+        points = np.concatenate((points, y_line))
+
     return points
+
